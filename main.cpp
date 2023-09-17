@@ -1,3 +1,4 @@
+#include <iostream>
 #include "raylib.h"
 
 Camera camera = { 0 };
@@ -13,9 +14,9 @@ Vector2 subTitleSize1 = { 0.0f, 0.0f };
 Vector2 subTitleSize2 = { 0.0f, 0.0f };
 const float fontSizeXL = 128.0f;
 const float fontSizeL = 64.0f;
-const char title[13] = "Vendel Period";
-const char subTitle1[33] = "Scandinavia, a few dacades after ";
-const char subTitle2[31] = "the collaps of the roman empire";
+const char title[14] = "Vendel Period";
+const char subTitle1[34] = "Scandinavia, a few dacades after ";
+const char subTitle2[32] = "the collaps of the roman empire";
 unsigned int splashSpeed = 1;
 static const int FIRST = 5;
 static const int SECOND = 10;
@@ -25,7 +26,6 @@ static const int END = 30;
 Music music;
 
 // Model
-Vector3 position;
 Model model;
 ModelAnimation anim;
 
@@ -61,14 +61,18 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Load gltf model
-    model = LoadModel("resources/models/robot.glb");
+    model = LoadModel("resources/models/character.glb");
     // Load gltf model animations
     unsigned int animsCount = 0;
     unsigned int animIndex = 0;
     unsigned int animCurrentFrame = 0;
-    ModelAnimation *modelAnimations = LoadModelAnimations("resources/models/robot.glb", &animsCount);
-    position = (Vector3){ 0.0f, 0.0f, 0.0f };    // Set model position
-    DisableCursor();                    // Limit cursor to relative movement inside the window
+    ModelAnimation *modelAnimations = LoadModelAnimations("resources/models/character.glb", &animsCount);
+    Vector3 position = (Vector3){ 0.0f, 0.0f, 0.0f };    // Set model position
+    Vector3 scale = (Vector3){ 0.01f, 0.01f, 0.01f };
+    Vector3 rotationAxis = (Vector3){ 1.0f, 0.0f, 0.0f };
+    float rotationAngle = 90.0f;
+
+    DisableCursor();                             // Limit cursor to relative movement inside the window
 
     SetTargetFPS(60);
 
@@ -90,13 +94,15 @@ int main()
         UpdateModelAnimation(model, anim, animCurrentFrame);
 
         BeginDrawing();
+            splashDone = 1;
             if (splashDone == 0) {
                 splashDone = DrawSplash();
             }
             else {
                 ClearBackground(BLACK);
                 BeginMode3D(camera);
-                    DrawModel(model, position, 1.0f, WHITE);
+                    DrawModelEx(model, position, rotationAxis, rotationAngle, scale, WHITE);
+                    std::cout << position.x;
                     DrawGrid(10, 1.0f);
                 EndMode3D();
                 DrawText("Use the LEFT/RIGHT mouse buttons to switch animation", 10, 10, 20, GRAY);
